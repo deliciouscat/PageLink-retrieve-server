@@ -1,0 +1,16 @@
+DB에 저장 완료: 
+doc_input_question=['IT_NEWS에 대한 질문 1', 'IT_NEWS에 대한 질문 2', 'IT_NEWS에 대한 질문 3'], 
+collection_question=['IT_NEWS 컬렉션 관련 질문 1', 'IT_NEWS 컬렉션 관련 질문 2', '확장된 쿼리: 문서 요약: [8월22일] 구글이 돈 안 되는 픽셀폰을...'], 
+doc_retrieved=['검색된 문서 1 - IT_NEWS', '검색된 문서 2 - 기반 쿼리: 3개', '검색된 문서 3 - ko_00000001 관련'], 
+collection_retrieved=None, 
+doc_summarized_new=문서 요약: [8월22일] 구글이 돈 안 되는 픽셀폰을 계속 내놓는 이유는..."제미나이 위한 것"
+
+
+
+DB에 저장 완료: 
+doc_input_question=['IT_NEWS에 대한 질문 1', 'IT_NEWS에 대한 질문 2', 'IT_NEWS에 대한 질문 3'], 
+collection_question=['IT_NEWS 컬렉션 관련 질문 1', 'IT_NEWS 컬렉션 관련 질문 2', '확장된 쿼리: 문서 요약: 코히어 "AGI 아닌 \'엔터프라이즈 AI\'...'], 
+doc_retrieved=['검색된 문서 1 - IT_NEWS', '검색된 문서 2 - 기반 쿼리: 3개', '검색된 문서 3 - ko_00000002 관련'], 
+collection_retrieved=None, 
+doc_summarized_new=문서 요약: 코히어 "AGI 아닌 '엔터프라이즈 AI' 집중…서울 허브로 亞 공략"
+장화진 APAC 총... (요약 완료), 

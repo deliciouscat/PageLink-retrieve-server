@@ -1,6 +1,8 @@
 import asyncio
 import uvicorn
+import logging
 from fastapi import FastAPI, HTTPException
+from dotenv import load_dotenv
 from app.data_model import DataInfo, ProcessRequest
 from app.db import send_to_db
 from app import scheduler   # 의존성을 고려한 비동기 처리 스케쥴링
@@ -10,7 +12,7 @@ from app import (
     expand_collection_query,  # `collection_question` 갱신
     search_docs,  # `doc_retrieved` 갱신
     )
-
+load_dotenv()
 
 app = FastAPI()
 
@@ -54,6 +56,19 @@ async def process_user_data(request: ProcessRequest) -> DataInfo:
             'doc_summarized_new', 'doc_input_question'
         ],
     })
+    #logging.info(f"DB에 저장 완료: \n"
+    print(f"DB에 저장 완료: \n"
+                #f"user_id={data.user_id}, \n"
+                #f"collection_id={data.collection_id}, \n"
+                #f"collection_name={data.collection_name}, \n"
+                #f"collection_memo={data.collection_memo}, \n"
+                f"doc_input_question={data.doc_input_question}, \n"
+                f"collection_question={data.collection_question}, \n"
+                f"doc_retrieved={data.doc_retrieved}, \n"
+                f"collection_retrieved={data.collection_retrieved}, \n"
+                f"doc_summarized_new={data.doc_summarized_new}, \n"
+                #f"doc_input={data.doc_input}"
+                )
     
     return data
 
@@ -64,6 +79,7 @@ async def process_document(request: ProcessRequest):
         result = await process_user_data(request)
         return {"status": "success", "user_id": result.user_id, "message": "처리 완료"}
     except Exception as e:
+        logging.error(f"처리 중 오류 발생: {str(e)}")
         raise HTTPException(status_code=500, detail=f"처리 중 오류 발생: {str(e)}")
 
 @app.get("/health")
