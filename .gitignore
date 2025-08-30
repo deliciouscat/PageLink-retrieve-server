@@ -175,3 +175,5 @@ tmp/
 
 # UV lock file (선택사항 - 팀과 상의)
 # uv.lock
+
+app/llm/prompts/*
