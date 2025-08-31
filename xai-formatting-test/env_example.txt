@@ -1,0 +1,5 @@
+# xAI API Key (OpenRouter에서 사용)
+OPENROUTER_API_KEY=your_openrouter_api_key_here
+
+# 또는 직접 xAI API 키 (향후 지원시)
+# XAI_API_KEY=your_xai_api_key_here
