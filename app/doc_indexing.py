@@ -9,6 +9,8 @@ from app.llm.parser import json_parser, safe_json_parser
 from app.data_model import QuestionsResponse
 from jinja2 import Environment, FileSystemLoader
 import json
+from pydantic import BaseModel, Field
+from typing import List
 
 
 # 현재 파일의 디렉토리를 기준으로 templates 폴더 설정
@@ -18,6 +20,16 @@ env = Environment(loader=FileSystemLoader(template_dir))
 
 # 기존 str_to_json 함수는 parser 모듈로 이동
 # from app.llm.parser import json_parser as str_to_json  # 하위 호환성
+
+class Question(BaseModel):
+    """생성된 질문을 나타내는 모델"""
+    question: str = Field(description="문서 내용을 기반으로 생성된 질문")
+    answer: str = Field(description="생성된 질문의 답변")
+    
+
+class QuestionsResponse(BaseModel):
+    """여러 질문들을 담는 응답 모델"""
+    questions: List[Question] = Field(description="생성된 질문들의 리스트", min_items=2, max_items=6)
 
 async def doc_indexing(data_instance):
     """
@@ -42,14 +54,17 @@ async def doc_indexing(data_instance):
             output_type=QuestionsResponse  # 구조화된 출력 타입 지정
         )
         
+        # raw result 출력
+        print(result)
+        
         # result.output이 이미 QuestionsResponse 객체임
         questions_response = result.output
         
-        print(f"✅ [doc_indexing] 완료 - User: {data_instance.user_id}, 생성된 질문 수: {questions_response.total_count}")
+        print(f"✅ [doc_indexing] 완료 - User: {data_instance.user_id}")
+
         
         return {
-            "questions": [q.model_dump() for q in questions_response.questions],
-            "total_count": questions_response.total_count
+            "questions": [q.model_dump() for q in questions_response.questions]
         }
         
     except Exception as e:
@@ -72,8 +87,7 @@ async def doc_indexing(data_instance):
         if questions:
             print(f"✅ [doc_indexing] Fallback 완료 - User: {data_instance.user_id}")
             return {
-                "questions": [q.model_dump() for q in questions.questions],
-                "total_count": questions.total_count
+                "questions": [q.model_dump() for q in questions.questions]
             }
         else:
             # 마지막 fallback: 기본 JSON 파싱

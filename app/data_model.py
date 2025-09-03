@@ -102,13 +102,4 @@ class ProcessRequest(BaseModel):
     user_id: str
 
 
-class Question(BaseModel):
-    """생성된 질문을 나타내는 모델"""
-    question: str = Field(description="문서 내용을 기반으로 생성된 질문")
-    category: str = Field(description="질문의 카테고리 (예: 기본정보, 세부사항, 분석, 적용 등)")
-    difficulty: str = Field(description="질문의 난이도 (easy, medium, hard)")
 
-class QuestionsResponse(BaseModel):
-    """여러 질문들을 담는 응답 모델"""
-    questions: List[Question] = Field(description="생성된 질문들의 리스트", min_items=3, max_items=10)
-    total_count: int = Field(description="생성된 총 질문 수")
