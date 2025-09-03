@@ -1,34 +1,71 @@
 """
-컬렉션 쿼리 확장 모듈 - 더미 구현
+컬렉션 쿼리 확장 모듈
 """
+import os
 import asyncio
 import random
+from app.llm.inference import structured_inference
+from jinja2 import Environment, FileSystemLoader
+from pydantic import BaseModel, Field
+from typing import List
 
+
+# 현재 파일의 디렉토리를 기준으로 templates 폴더 설정
+current_dir = os.path.dirname(os.path.abspath(__file__))
+template_dir = os.path.join(current_dir, 'llm')
+env = Environment(loader=FileSystemLoader(template_dir))
+
+# 기존 str_to_json 함수는 parser 모듈로 이동
+# from app.llm.parser import json_parser as str_to_json  # 하위 호환성
+
+class Question(BaseModel):
+    """생성된 질문을 나타내는 모델"""
+    question: str = Field(description="문서 내용을 기반으로 생성된 질문")
+    answer: str = Field(description="생성된 질문의 답변")
+    
+
+class QuestionsResponse(BaseModel):
+    """여러 질문들을 담는 응답 모델"""
+    questions: List[Question] = Field(description="생성된 질문들의 리스트", min_items=2, max_items=6)
 
 async def expand_collection_query(data_instance):
     """
-    컬렉션 쿼리 확장 함수 (더미 구현)
-    doc_summary 결과를 받아서 컬렉션 질문을 생성
-    doc_summary -> expand_collection_query 순서 의존성
+    문서 인덱싱 함수 - pydantic-ai 구조화된 출력 사용
+    doc_input을 받아서 질문 리스트를 생성
     """
-    print(f"🔄 [expand_collection_query] 시작 - User: {data_instance.user_id}")
+    print(f"🔍 [expand_collection_query] 시작 - User: {data_instance.user_id}")
     
-    # 1-2초 딜레이 시뮬레이션
-    delay = random.uniform(1.0, 2.0)
-    await asyncio.sleep(delay)
+    template = env.get_template('prompts/expand_collection_query_250903.jinja')
+    # doc_summaries 구성
+
+    system_prompt = template.render(doc_summaries=data_instance.doc_summaries, collection_memo=data_instance.collection_memo)
     
-    # doc_summarized_new가 있는지 확인 (의존성 체크)
-    if hasattr(data_instance, 'doc_summarized_new') and data_instance.doc_summarized_new:
-        base_text = data_instance.doc_summarized_new
-    else:
-        base_text = data_instance.doc_input
+    # 구조화된 출력을 위한 새로운 inference 함수 사용
+    result = await structured_inference(
+        prompt=data_instance.doc_input,
+        # structured output은 제한된 모델만 가능:
+        # - gpt-4 계열, gemini-2.5 계열
+        # - 불가능한 모델: gpt-5 계열, grok-3 계열
+        #model_name="google/gemini-2.5-pro",
+        model_name="openai/gpt-4.1",
+        model_settings={
+            "temperature": 0.75,
+            "max_tokens": 1000,
+        },
+        system_prompt=system_prompt,
+        output_type=QuestionsResponse  # 구조화된 출력 타입 지정
+    )
     
-    # 더미 컬렉션 질문 생성
-    collection_questions = [
-        f"{data_instance.collection_name} 컬렉션 관련 질문 1",
-        f"{data_instance.collection_name} 컬렉션 관련 질문 2",
-        f"확장된 쿼리: {base_text[:30]}..."
-    ]
+    # raw result 출력
+    print(result)
     
-    print(f"✅ [expand_collection_query] 완료 ({delay:.1f}초) - User: {data_instance.user_id}")
-    return collection_questions
+    # result.output이 이미 QuestionsResponse 객체임
+    questions_response = result.output
+    
+    print(f"✅ [doc_indexing] 완료 - User: {data_instance.user_id}")
+
+    
+    return {
+        "questions": [q.model_dump() for q in questions_response.questions]
+    }
+    

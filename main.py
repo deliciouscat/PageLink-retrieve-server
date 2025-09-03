@@ -38,6 +38,9 @@ async def process_user_data(request: ProcessRequest) -> DataInfo:
         # 처리된 데이터들은 기본값 None으로 자동 초기화됨
     )
     
+    # User_info에서 데이터 호출
+    #await get_user_info(data)
+
     # 처리 작업들 정의
     process_tasks = [
         [doc_summary, expand_collection_query, search_docs], 

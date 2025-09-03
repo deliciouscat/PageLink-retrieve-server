@@ -4,11 +4,8 @@
 import os
 import asyncio
 import random
-from app.llm.inference import structured_inference, inference
-from app.llm.parser import json_parser, safe_json_parser
-from app.data_model import QuestionsResponse
+from app.llm.inference import structured_inference
 from jinja2 import Environment, FileSystemLoader
-import json
 from pydantic import BaseModel, Field
 from typing import List
 
@@ -41,56 +38,33 @@ async def doc_indexing(data_instance):
     template = env.get_template('prompts/doc_indexing_250830.jinja')
     system_prompt = template.render(doc_input=data_instance.doc_input, memopad=data_instance.collection_memo)
     
-    try:
-        # 구조화된 출력을 위한 새로운 inference 함수 사용
-        result = await structured_inference(
-            prompt=data_instance.doc_input,
-            model_name="x-ai/grok-3-mini",
-            model_settings={
-                "temperature": 0.75,
-                "max_tokens": 1000,
-            },
-            system_prompt=system_prompt,
-            output_type=QuestionsResponse  # 구조화된 출력 타입 지정
-        )
-        
-        # raw result 출력
-        print(result)
-        
-        # result.output이 이미 QuestionsResponse 객체임
-        questions_response = result.output
-        
-        print(f"✅ [doc_indexing] 완료 - User: {data_instance.user_id}")
+    # 구조화된 출력을 위한 새로운 inference 함수 사용
+    result = await structured_inference(
+        prompt=data_instance.doc_input,
+        # structured output은 제한된 모델만 가능:
+        # - gpt-4 계열, gemini-2.5 계열
+        # - 불가능한 모델: gpt-5 계열, grok-3 계열
+        model_name="google/gemini-2.5-flash-lite",
+        #model_name="openai/gpt-4.1-nano",
+        model_settings={
+            "temperature": 0.75,
+            "max_tokens": 1000,
+        },
+        system_prompt=system_prompt,
+        output_type=QuestionsResponse  # 구조화된 출력 타입 지정
+    )
+    
+    # raw result 출력
+    print(result)
+    
+    # result.output이 이미 QuestionsResponse 객체임
+    questions_response = result.output
+    
+    print(f"✅ [doc_indexing] 완료 - User: {data_instance.user_id}")
 
-        
-        return {
-            "questions": [q.model_dump() for q in questions_response.questions]
-        }
-        
-    except Exception as e:
-        print(f"⚠️ [doc_indexing] 구조화된 출력 실패, 기존 방식으로 fallback: {e}")
-        
-        # fallback: 기존 텍스트 기반 방식
-        result = await inference(
-            prompt=data_instance.doc_input,
-            model_name="x-ai/grok-3-mini",
-            model_settings={
-                "temperature": 0.75,
-                "max_tokens": 1000,
-            },
-            system_prompt=system_prompt
-        )
-        
-        # 안전한 JSON 파싱 사용
-        questions = safe_json_parser(result.output, QuestionsResponse)
-        
-        if questions:
-            print(f"✅ [doc_indexing] Fallback 완료 - User: {data_instance.user_id}")
-            return {
-                "questions": [q.model_dump() for q in questions.questions]
-            }
-        else:
-            # 마지막 fallback: 기본 JSON 파싱
-            basic_questions = safe_json_parser(result.output)
-            print(f"⚠️ [doc_indexing] 기본 파싱으로 완료 - User: {data_instance.user_id}")
-            return basic_questions or {"questions": [], "total_count": 0}
+    
+    return {
+        "questions": [q.model_dump() for q in questions_response.questions]
+    }
+    
+
