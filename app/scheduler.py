@@ -1,4 +1,5 @@
 import asyncio
+import traceback
 from typing import List, Union, Callable, Dict, Any
 from collections import defaultdict
 
@@ -72,7 +73,12 @@ async def _execute_single_task(
             await _update_data_instance(data_instance, task.__name__, result, lock_manager)
             
     except Exception as e:
-        print(f"작업 '{task.__name__}' 실행 중 오류 발생: {e}")
+        #print(f"작업 '{task.__name__}' 실행 중 오류 발생: {e}")
+        # 디버깅 임시 코드
+        error_details = traceback.format_exc()
+        print(f"작업 '{task.__name__}' 실행 중 오류 발생:")
+        print(f"오류 메시지: {e}")
+        print(f"상세 스택 트레이스:\n{error_details}")
         raise
 
 
@@ -83,7 +89,10 @@ async def _execute_sequential_chain(
 ) -> None:
     """순차 작업 체인을 실행 (체인 내부는 순차, 다른 체인과는 병렬)"""
     try:
-        for task in chain:
+        #for task in chain:
+        # 디버깅 임시 코드
+        for i, task in enumerate(chain):
+            print(f"순차 체인에서 작업 {i+1}/{len(chain)} 실행 중: {task.__name__}")
             # 체인 내에서는 순차적으로 실행
             result = await task(data_instance)
             
@@ -92,7 +101,16 @@ async def _execute_sequential_chain(
                 await _update_data_instance(data_instance, task.__name__, result, lock_manager)
                 
     except Exception as e:
-        print(f"순차 체인 실행 중 오류 발생: {e}")
+        #print(f"순차 체인 실행 중 오류 발생: {e}")
+        # 디버깅 임시 코드
+        error_details = traceback.format_exc()
+        current_task_name = task.__name__ if 'task' in locals() else "알 수 없음"
+        current_step = i + 1 if 'i' in locals() else "알 수 없음"
+        
+        print(f"순차 체인 실행 중 오류 발생:")
+        print(f"오류 발생 위치: 체인의 {current_step}번째 작업 '{current_task_name}'")
+        print(f"오류 메시지: {e}")
+        print(f"상세 스택 트레이스:\n{error_details}")
         raise
 
 

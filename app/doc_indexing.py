@@ -53,10 +53,7 @@ async def doc_indexing(data_instance):
         system_prompt=system_prompt,
         output_type=QuestionsResponse  # 구조화된 출력 타입 지정
     )
-    
-    # raw result 출력
-    print(result)
-    
+
     # result.output이 이미 QuestionsResponse 객체임
     questions_response = result.output
     

@@ -12,10 +12,10 @@ class DataInfo(BaseModel):
     collection_name: str
     collection_memo: str
     user_id: str
-
     # 처리된 데이터 (갱신 대상) - None으로 초기화하여 갱신 여부 추적
-    doc_summarized: Optional[List[str]] = None
+    doc_summarized: Optional[List[Dict[str, str]]] = None  # Dict 타입으로 변경
     doc_summarized_new: Optional[str] = None
+    doc_summarized_new_id: Optional[str] = None
     doc_input_question: Optional[List[str]] = None
     collection_question: Optional[List[str]] = None
     doc_retrieved: Optional[List[str]] = None
@@ -95,11 +95,12 @@ class DataInfo(BaseModel):
 class ProcessRequest(BaseModel):
     """처리 요청을 위한 모델"""
     doc_input: str
-    #collection: List[str]
     collection_id: str
     collection_name: str
     collection_memo: str
     user_id: str
+    # 타입을 Dict 구조로 수정
+    doc_summarized: Optional[List[Dict[str, str]]] = None
 
 
 

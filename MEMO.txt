@@ -1,16 +1,14 @@
-DB에 저장 완료: 
-doc_input_question=['IT_NEWS에 대한 질문 1', 'IT_NEWS에 대한 질문 2', 'IT_NEWS에 대한 질문 3'], 
-collection_question=['IT_NEWS 컬렉션 관련 질문 1', 'IT_NEWS 컬렉션 관련 질문 2', '확장된 쿼리: 문서 요약: [8월22일] 구글이 돈 안 되는 픽셀폰을...'], 
-doc_retrieved=['검색된 문서 1 - IT_NEWS', '검색된 문서 2 - 기반 쿼리: 3개', '검색된 문서 3 - ko_00000001 관련'], 
-collection_retrieved=None, 
-doc_summarized_new=문서 요약: [8월22일] 구글이 돈 안 되는 픽셀폰을 계속 내놓는 이유는..."제미나이 위한 것"
+structured output 미사용 시 json output 실패했을 시 에러 처리 있어야 함.
 
 
+# expand_collection_query 모델 가성비 분석
 
-DB에 저장 완료: 
-doc_input_question=['IT_NEWS에 대한 질문 1', 'IT_NEWS에 대한 질문 2', 'IT_NEWS에 대한 질문 3'], 
-collection_question=['IT_NEWS 컬렉션 관련 질문 1', 'IT_NEWS 컬렉션 관련 질문 2', '확장된 쿼리: 문서 요약: 코히어 "AGI 아닌 \'엔터프라이즈 AI\'...'], 
-doc_retrieved=['검색된 문서 1 - IT_NEWS', '검색된 문서 2 - 기반 쿼리: 3개', '검색된 문서 3 - ko_00000002 관련'], 
-collection_retrieved=None, 
-doc_summarized_new=문서 요약: 코히어 "AGI 아닌 '엔터프라이즈 AI' 집중…서울 허브로 亞 공략"
-장화진 APAC 총... (요약 완료), 
+## Grok-3-mini
+ 0.000843 $
+🔍🔍questions_response🔍🔍
+{'questions': [{'question': "How might Google's strategy of using Pixel phones as a testing ground for AI technologies like Gemini influence the competitive dynamics among other AI companies in the mobile market?"}, {'question': 'What potential long-term implications could arise from minimizing AI regulations in high-impact areas, and how might this affect global innovation balances between safety and technological advancement?'}, {'question': "In what ways could OpenAI's increasing computing demands, driven by models like GPT-5, accelerate or exacerbate challenges in the global semiconductor supply chain?"}, {'question': "How could Meta's decision to dismantle its Llama development team and reassign personnel impact the broader open-source AI ecosystem and collaborative innovation efforts?"}, {'question': "What underlying factors might drive the effectiveness of strategies like Google's integration of AI into everyday devices, and how could this reshape user adoption patterns in emerging markets?"}]}
+
+## Qwen3 235B A22B Thinking 2507
+ 0.00124 ~ 0.00131 $
+🔍🔍questions_response🔍🔍
+{'questions': [{'question': "How might Google's 'flywheel effect' strategy with Gemini AI fundamentally alter the power dynamics between tech giants and their hardware partners in the Android ecosystem?"}, {'question': "What systemic infrastructure innovations could emerge if AI companies collectively sought alternatives to GPU-dependent scaling, given OpenAI's repeated computational bottlenecks with advanced models?"}, {'question': 'How could the precedent of equity-based semiconductor subsidies reshape national technology sovereignty frameworks beyond immediate corporate-government relations?'}, {'question': 'What unintended consequences might arise when tech companies prioritize internal AI testing platforms over partner-driven innovation, using Pixel phones as a case study?'}]}

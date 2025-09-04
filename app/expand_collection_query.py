@@ -4,10 +4,11 @@
 import os
 import asyncio
 import random
-from app.llm.inference import structured_inference
+from app.llm.inference import inference#structured_inference
 from jinja2 import Environment, FileSystemLoader
 from pydantic import BaseModel, Field
 from typing import List
+import json
 
 
 # 현재 파일의 디렉토리를 기준으로 templates 폴더 설정
@@ -15,13 +16,10 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 template_dir = os.path.join(current_dir, 'llm')
 env = Environment(loader=FileSystemLoader(template_dir))
 
-# 기존 str_to_json 함수는 parser 모듈로 이동
-# from app.llm.parser import json_parser as str_to_json  # 하위 호환성
-
 class Question(BaseModel):
     """생성된 질문을 나타내는 모델"""
     question: str = Field(description="문서 내용을 기반으로 생성된 질문")
-    answer: str = Field(description="생성된 질문의 답변")
+    #answer: str = Field(description="생성된 질문의 답변")
     
 
 class QuestionsResponse(BaseModel):
@@ -37,35 +35,36 @@ async def expand_collection_query(data_instance):
     
     template = env.get_template('prompts/expand_collection_query_250903.jinja')
     # doc_summaries 구성
-
-    system_prompt = template.render(doc_summaries=data_instance.doc_summaries, collection_memo=data_instance.collection_memo)
+    data_instance.doc_summarized.append({"summary": data_instance.doc_summarized_new, "summary_id": data_instance.doc_summarized_new_id})
+    doc_summaries_joined = "\n------\n".join([summary["summary"] for summary in data_instance.doc_summarized])
+    # 여기까진 확실히 됨
+    prompt = template.render(doc_summaries=doc_summaries_joined, collection_memo=data_instance.collection_memo)
     
     # 구조화된 출력을 위한 새로운 inference 함수 사용
-    result = await structured_inference(
-        prompt=data_instance.doc_input,
+    result = await inference(
+        prompt=prompt,
         # structured output은 제한된 모델만 가능:
         # - gpt-4 계열, gemini-2.5 계열
         # - 불가능한 모델: gpt-5 계열, grok-3 계열
         #model_name="google/gemini-2.5-pro",
-        model_name="openai/gpt-4.1",
+        #model_name="x-ai/grok-3-mini",
+        model_name="qwen/qwen3-235b-a22b-thinking-2507",
         model_settings={
-            "temperature": 0.75,
-            "max_tokens": 1000,
+            "temperature": 0.7,
+            "max_tokens": 5000,
         },
-        system_prompt=system_prompt,
-        output_type=QuestionsResponse  # 구조화된 출력 타입 지정
+        system_prompt=None,
+        #output_type=QuestionsResponse  # 구조화된 출력 타입 지정
     )
-    
-    # raw result 출력
-    print(result)
-    
-    # result.output이 이미 QuestionsResponse 객체임
-    questions_response = result.output
-    
+    questions_response = json.loads(result.output)
+    #print("🔍🔍questions_response🔍🔍")
+    #print(questions_response)
     print(f"✅ [doc_indexing] 완료 - User: {data_instance.user_id}")
 
-    
-    return {
-        "questions": [q.model_dump() for q in questions_response.questions]
-    }
+    return questions_response
+
+    # structured output 사용 시 코드
+    #return {
+    #    "questions": [q.model_dump() for q in questions_response.questions]
+    #}
     

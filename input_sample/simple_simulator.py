@@ -11,6 +11,7 @@ from pathlib import Path
 from datetime import datetime
 from fastapi import FastAPI
 from pydantic import BaseModel
+from typing import Optional, List
 
 app = FastAPI(title="간단한 Service Server 시뮬레이터")
 
@@ -20,6 +21,9 @@ class ServiceData(BaseModel):
     collection_name: str
     collection_memo: str
     user_id: str
+
+    # 임시(나중엔 UserInfo DB에서 불러오게 될 부분)
+    doc_summarized: Optional[List[str]] = None
 
 # 샘플 데이터 로드
 def load_samples():
@@ -46,7 +50,12 @@ def get_data():
             collection_id=f"{datetime.now().strftime('%y%m%d')}_00000001",
             collection_name="TEST_NEWS",
             collection_memo="테스트용 메모",
-            user_id="ko_00000001"
+            user_id="ko_00000001",
+            # 임시(나중엔 UserInfo DB에서 불러오게 될 부분)
+            doc_summarized=[{
+                "summary": "테스트 요약 내용입니다.",
+                "summary_id": f"{datetime.now().strftime('%y%m%d')}_00000001_00000001"
+            }]
         )
     
     # 기존 샘플에서 랜덤 선택

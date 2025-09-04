@@ -34,8 +34,11 @@ async def process_user_data(request: ProcessRequest) -> DataInfo:
         collection_id=request.collection_id,
         collection_name=request.collection_name,
         collection_memo=request.collection_memo,
-        user_id=request.user_id
+        user_id=request.user_id,
         # 처리된 데이터들은 기본값 None으로 자동 초기화됨
+
+        # 임시(나중엔 UserInfo DB에서 불러오게 될 부분)
+        doc_summarized=request.doc_summarized,
     )
     
     # User_info에서 데이터 호출
