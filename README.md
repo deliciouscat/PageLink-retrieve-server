@@ -12,11 +12,11 @@ process_tasks = [
 
 ## 테스트 방법
 ### 터미널 1: Service Server 시뮬레이터
-`python input_sample/simple_simulator.py`
+`uv run input_sample/simple_simulator.py`
 
 ### 터미널 2: Retrieve Server  
-`python main.py`
+`uv run main.py`
 
 ### 터미널 3: 클라이언트 테스트
-`python input_sample/simple_client.py --sample 1`
-`python input_sample/simple_client.py --sample 2`
+`uv run input_sample/simple_client.py --sample 1`
+`uv run input_sample/simple_client.py --sample 2`

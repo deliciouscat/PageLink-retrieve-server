@@ -1,14 +1,8 @@
-structured output 미사용 시 json output 실패했을 시 에러 처리 있어야 함.
-
-
 # expand_collection_query 모델 가성비 분석
 
-## Grok-3-mini
- 0.000843 $
-🔍🔍questions_response🔍🔍
-{'questions': [{'question': "How might Google's strategy of using Pixel phones as a testing ground for AI technologies like Gemini influence the competitive dynamics among other AI companies in the mobile market?"}, {'question': 'What potential long-term implications could arise from minimizing AI regulations in high-impact areas, and how might this affect global innovation balances between safety and technological advancement?'}, {'question': "In what ways could OpenAI's increasing computing demands, driven by models like GPT-5, accelerate or exacerbate challenges in the global semiconductor supply chain?"}, {'question': "How could Meta's decision to dismantle its Llama development team and reassign personnel impact the broader open-source AI ecosystem and collaborative innovation efforts?"}, {'question': "What underlying factors might drive the effectiveness of strategies like Google's integration of AI into everyday devices, and how could this reshape user adoption patterns in emerging markets?"}]}
+Grok-3-mini를 1이라 했을 때 비용 배율:
+Qwen3-235B-thinking : 1.5
+GLM4.1 thinking : 0.5
+Deepseek qwen 8b : 0.25
 
-## Qwen3 235B A22B Thinking 2507
- 0.00124 ~ 0.00131 $
-🔍🔍questions_response🔍🔍
-{'questions': [{'question': "How might Google's 'flywheel effect' strategy with Gemini AI fundamentally alter the power dynamics between tech giants and their hardware partners in the Android ecosystem?"}, {'question': "What systemic infrastructure innovations could emerge if AI companies collectively sought alternatives to GPU-dependent scaling, given OpenAI's repeated computational bottlenecks with advanced models?"}, {'question': 'How could the precedent of equity-based semiconductor subsidies reshape national technology sovereignty frameworks beyond immediate corporate-government relations?'}, {'question': 'What unintended consequences might arise when tech companies prioritize internal AI testing platforms over partner-driven innovation, using Pixel phones as a case study?'}]}
+deepseek 8b를 프롬프트 깎아서 쓰는게 합리적인듯. (저렴한 reasoning > 비싼 instruct)

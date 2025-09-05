@@ -2,9 +2,10 @@
 컬렉션 쿼리 확장 모듈
 """
 import os
+import re
 import asyncio
 import random
-from app.llm.inference import inference#structured_inference
+from app.llm.inference import inference
 from jinja2 import Environment, FileSystemLoader
 from pydantic import BaseModel, Field
 from typing import List
@@ -19,12 +20,16 @@ env = Environment(loader=FileSystemLoader(template_dir))
 class Question(BaseModel):
     """생성된 질문을 나타내는 모델"""
     question: str = Field(description="문서 내용을 기반으로 생성된 질문")
-    #answer: str = Field(description="생성된 질문의 답변")
+    approach: int = Field(description="생성된 질문의 접근 방식")
     
-
 class QuestionsResponse(BaseModel):
     """여러 질문들을 담는 응답 모델"""
     questions: List[Question] = Field(description="생성된 질문들의 리스트", min_items=2, max_items=6)
+
+def convert_to_json(output):
+    output = re.sub(r'^```(?:json)?\s*', '', output.strip())
+    output = re.sub(r'\s*```$', '', output)
+    return json.loads(output)
 
 async def expand_collection_query(data_instance):
     """
@@ -33,7 +38,7 @@ async def expand_collection_query(data_instance):
     """
     print(f"🔍 [expand_collection_query] 시작 - User: {data_instance.user_id}")
     
-    template = env.get_template('prompts/expand_collection_query_250903.jinja')
+    template = env.get_template('prompts/expand_collection_query_250905.jinja')
     # doc_summaries 구성
     data_instance.doc_summarized.append({"summary": data_instance.doc_summarized_new, "summary_id": data_instance.doc_summarized_new_id})
     doc_summaries_joined = "\n------\n".join([summary["summary"] for summary in data_instance.doc_summarized])
@@ -46,9 +51,9 @@ async def expand_collection_query(data_instance):
         # structured output은 제한된 모델만 가능:
         # - gpt-4 계열, gemini-2.5 계열
         # - 불가능한 모델: gpt-5 계열, grok-3 계열
-        #model_name="google/gemini-2.5-pro",
         #model_name="x-ai/grok-3-mini",
-        model_name="qwen/qwen3-235b-a22b-thinking-2507",
+        #model_name="qwen/qwen3-235b-a22b-thinking-2507",
+        model_name="deepseek/deepseek-r1-0528-qwen3-8b",
         model_settings={
             "temperature": 0.7,
             "max_tokens": 5000,
@@ -56,9 +61,11 @@ async def expand_collection_query(data_instance):
         system_prompt=None,
         #output_type=QuestionsResponse  # 구조화된 출력 타입 지정
     )
-    questions_response = json.loads(result.output)
     #print("🔍🔍questions_response🔍🔍")
+    #print(result.output)
+    questions_response = convert_to_json(result.output)
     #print(questions_response)
+
     print(f"✅ [doc_indexing] 완료 - User: {data_instance.user_id}")
 
     return questions_response
