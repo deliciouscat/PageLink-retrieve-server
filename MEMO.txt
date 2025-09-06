@@ -6,3 +6,10 @@ GLM4.1 thinking : 0.5
 Deepseek qwen 8b : 0.25
 
 deepseek 8b를 프롬프트 깎아서 쓰는게 합리적인듯. (저렴한 reasoning > 비싼 instruct)
+
+
+ToDo:
+# `search_docs` 구현:
+- `perplexity/sonar` 모델 사용해서 cited 웹사이트 불러오기.
+- pydantic-ai에 유기적으로 통합될 수 있는 요청 방법 없는지 확인
+- 없으면 OpenAI ChatCompletion 사용하는 수 밖에
