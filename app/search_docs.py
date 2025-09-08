@@ -3,7 +3,9 @@
 """
 import asyncio
 import random
+from app.retrieve.api_search.natural_search import from_openrouter
 
+# 필요 기능: 링크 중복 제거 / 결과 연관성 검토
 
 async def search_docs(data_instance):
     """

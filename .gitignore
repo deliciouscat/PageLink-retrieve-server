@@ -177,4 +177,5 @@ tmp/
 # uv.lock
 
 app/llm/prompts/*
+test.ipynb
 xai-formatting-test/doc_indexing_250830.jinja
