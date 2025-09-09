@@ -1,7 +1,9 @@
 import os
+from dotenv import load_dotenv
 from openai import OpenAI
 from pydantic import BaseModel, HttpUrl, Field
 from typing import List, Optional
+load_dotenv()
 
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
@@ -41,7 +43,6 @@ def from_openrouter(query: str, advanced: bool = False) -> SearchResult:
             }
         ]
     )
-
     annotations = completion.choices[0].message.annotations
     urls = [a.url_citation.url for a in annotations]
     return SearchResult(

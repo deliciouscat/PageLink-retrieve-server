@@ -9,6 +9,16 @@ process_tasks = [
 ```
 -> doc_summary ~ search_docs는 순차적으로 수행. doc_indexing은 이와 병렬적으로 수행.
 
+`scheduler.py`의 field_mapping 수정해서 함수 별 출력값 매핑
+```
+field_mapping = {
+        'doc_summary': 'doc_summarized_new',
+        'doc_indexing': 'doc_input_question', 
+        'expand_collection_query': 'collection_question',
+        'search_docs': 'doc_retrieved'
+    }
+```
+
 
 ## 테스트 방법
 ### 터미널 1: Service Server 시뮬레이터

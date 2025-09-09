@@ -10,4 +10,11 @@ deepseek 8b를 프롬프트 깎아서 쓰는게 합리적인듯. (저렴한 reas
 
 ToDo:
 # `search_docs` 구현:
-- `retrieve/api_search/natural_search.py` 사용해서 링크 가져오기.
+- 생성된 질문이 너무 방대함. 여러 질문 추려서 하나의 질문으로 병합하자.
+
+# 전체적으로 오류 시 재시도 루프 넣어야 함.
+- json 파싱 오류 -> 오류난 input을 `gpt4.1-nano`에 넣어서 structed output으로
+- 통신 오류 등 기타 -> 재시도 ㄱ
+
+# 클라우드에 DB 개통하기.
+- MongoDB Atlas
