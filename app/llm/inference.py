@@ -49,11 +49,15 @@ async def structured_inference(
         model_name,
         provider=OpenRouterProvider(api_key=os.getenv("OPENROUTER_API_KEY")),
     )
-    agent = Agent(
-        model,
-        model_settings=model_settings,
-        system_prompt=system_prompt,
-        output_type=output_type  # 구조화된 출력 타입 지정
-    )
+    
+    agent_kwargs = {
+        "model": model,
+        "model_settings": model_settings,
+        "output_type": output_type  # 구조화된 출력 타입 지정
+    }
+    if system_prompt: 
+        agent_kwargs["system_prompt"] = system_prompt
+    
+    agent = Agent(**agent_kwargs)
     result = await agent.run(prompt)
     return result

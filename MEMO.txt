@@ -12,6 +12,12 @@ ToDo:
 # `search_docs` 구현:
 - 생성된 질문이 너무 방대함. 여러 질문 추려서 하나의 질문으로 병합하자.
 
+# `keyword_search.py` 구현:
+https://bravesol.tistory.com/276
+
+- DuckDuckGo: limit이 얼마인지 불명확.
+- Serper: 50000회 호출에 70000원 (https://serper.dev/)
+
 # 전체적으로 오류 시 재시도 루프 넣어야 함.
 - json 파싱 오류 -> 오류난 input을 `gpt4.1-nano`에 넣어서 structed output으로
 - 통신 오류 등 기타 -> 재시도 ㄱ
