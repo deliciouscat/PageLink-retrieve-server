@@ -67,7 +67,7 @@ async def search_single_question(question: str):
         # 옵션 2: 키워드 검색 (DuckDuckGo 기반)
         search_result = await loop.run_in_executor(None, from_ddgs, question, True)
         
-        return search_result.urls
+        return search_result
     except Exception as e:
         print(f"⚠️ [search_docs] 검색 실패: {question} - {str(e)}")
         return []
@@ -92,7 +92,7 @@ async def search_docs(data_instance):
     queries_result = await question_merging(questions)
     queries = queries_result["queries"]
     print(f"🔍 [search_docs] 쿼리 목록: {queries}")
-    
+
     search_tasks = [
         search_single_question(query) 
         for query in queries
@@ -101,12 +101,5 @@ async def search_docs(data_instance):
     # 병렬 실행
     results = await asyncio.gather(*search_tasks)
     
-    # 모든 결과를 하나의 리스트로 합치고 중복 제거
-    all_urls = []
-    for urls in results:
-        all_urls.extend(urls)
-    
-    unique_urls = list(set(all_urls))
-    
-    print(f"✅ [search_docs] 완료 - User: {data_instance.user_id}, 결과: {len(unique_urls)}개")
-    return unique_urls
+    print(f"✅ [search_docs] 완료 - User: {data_instance.user_id}, 결과: {len(results)}개")
+    return results

@@ -19,15 +19,15 @@ class SearchRequest(BaseModel):
     advanced: bool = Field(default=False, description="고급 검색 모드 사용 여부")
 
 def from_ddgs(query: str, advanced: bool = False) -> SearchResult:
-    max_results = 4
-    if advanced: max_results = 8
+    max_results = 3
+    if advanced: max_results = 5
 
     results = DDGS().text(
         query, 
         max_results=max_results,
         #language="ko",
         )
-    urls = [result['body'] for result in results]
+    urls = [result['href'] for result in results]   # title, href, body
     return SearchResult(
         urls=urls,
         query=query,
